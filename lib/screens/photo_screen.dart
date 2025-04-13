@@ -1,4 +1,5 @@
 import 'dart:html' as html;
+import 'package:faber_ticket_tkptsl/screens/custom_screen.dart';
 import 'package:faber_ticket_tkptsl/screens/main_screen.dart';
 import 'package:faber_ticket_tkptsl/screens/song_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -107,7 +108,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
               icon: Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => MainScreen()),
+                MaterialPageRoute(builder: (context) => CustomScreen()),
               ),
             ),
           ),
@@ -157,21 +158,6 @@ class _PhotoScreenState extends State<PhotoScreen> {
                           backgroundColor: Colors.deepPurpleAccent,
                         ),
                         child: Text('Upload'),
-                      ),
-                      SizedBox(width: 20), // ✅ 버튼 간격 조정
-                      ElevatedButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SongScreen()),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(120, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          backgroundColor: Colors.blueAccent,
-                        ),
-                        child: Text('Setlist'),
                       ),
                     ],
                   ),

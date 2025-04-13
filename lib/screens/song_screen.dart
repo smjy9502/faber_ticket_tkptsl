@@ -1,3 +1,4 @@
+import 'package:faber_ticket_tkptsl/screens/custom_screen.dart';
 import 'package:faber_ticket_tkptsl/screens/main_screen.dart';
 import 'package:faber_ticket_tkptsl/screens/photo_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -93,7 +94,7 @@ class _SongScreenState extends State<SongScreen> {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => PhotoScreen()),
+                  MaterialPageRoute(builder: (context) => CustomScreen()),
                 );
               },
             ),

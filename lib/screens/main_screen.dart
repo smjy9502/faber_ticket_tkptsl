@@ -1,3 +1,4 @@
+import 'package:faber_ticket_tkptsl/screens/custom_screen.dart';
 import 'package:faber_ticket_tkptsl/screens/photo_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:faber_ticket_tkptsl/utils/constants.dart';
@@ -62,7 +63,7 @@ class _MainScreenState extends State<MainScreen> {
             child: ElevatedButton(
               onPressed: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => PhotoScreen()),
+                MaterialPageRoute(builder: (context) => CustomScreen()),
               ),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(120, 50),

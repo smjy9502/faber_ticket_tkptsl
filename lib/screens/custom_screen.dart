@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:faber_ticket_tkptsl/screens/photo_screen.dart';
 import 'package:faber_ticket_tkptsl/screens/song_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -135,7 +136,27 @@ class _CustomScreenState extends State<CustomScreen> {
               // 하단 Photos 버튼 (고정 위치)
               Positioned(
                 bottom: 10,
-                left: MediaQuery.of(context).size.width * 0.5 - 30, // 너비 조정
+                left: MediaQuery.of(context).size.width * 0.5 - 10, // 너비 조정
+                child: ElevatedButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PhotoScreen()),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(80, 30), // 기존 150x50 → 120x40
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    backgroundColor: Colors.deepPurpleAccent,
+                  ),
+                  child: Text('Photos'),
+                ),
+              ),
+
+              Positioned(
+                bottom: 10,
+                left: MediaQuery.of(context).size.width * 0.5 - 40, // 너비 조정
                 child: ElevatedButton(
                   onPressed: () => Navigator.push(
                     context,
