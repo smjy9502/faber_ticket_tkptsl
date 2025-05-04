@@ -4,7 +4,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "site": "faber-ticket-tkptsl",
+    "site": "faber-ticket-tkptsl-daysix250315",
     "public": "build/web",
     "ignore": [
       "firebase.json",
