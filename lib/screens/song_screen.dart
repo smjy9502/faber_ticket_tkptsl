@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:faber_ticket_tkptsl/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:html' as html; // For url cleansing
 
 
 class SongScreen extends StatefulWidget {
@@ -17,31 +18,31 @@ class _SongScreenState extends State<SongScreen> {
     SongInfo('Best Part', 'The Book of Us : Gravity', 'https://youtu.be/a-UfQfufkgU?si=f-Y4YeKPxz3DcH3F', 0),
     SongInfo('Better Better', 'MOONRISE', 'https://youtu.be/7qkznpWePpY?si=uLTEa8pLwNL0yhMA', 1),
     SongInfo('Healer', 'The Book of Us : Negentropy', 'https://youtu.be/HXEG0fqrViM?si=PY5WUHkY5mT9dqcd', 2),
-    SongInfo('한 페이지가 될 수 있게', 'The Book of Us : Gravity', 'https://youtu.be/vnS_jn2uibs?si=YliqloRK12WZ2TI8', 3),
-    SongInfo('그녀가 웃었다', 'Band Aid', 'https://youtu.be/09ig852MsMg?si=BcedZECKDmA--r1A', 4),
-    SongInfo('How to love', 'The Book of Us : Gravity', 'https://youtu.be/qCZm8abq8Co?si=X0FxVgmSdX6FRDZs', 5),
-    SongInfo('쏟아진다', 'Every DAY6 November', 'https://youtu.be/IUGSKW12lHY?si=7OnG_f8a1uA8L5FW', 6),
-    SongInfo('Say Wow', 'Every DAY6 April', 'https://youtu.be/8meVwcHtoQk?si=367m1l71yl-pHc7G', 7),
-    SongInfo('예뻤어', 'Every DAY6 February', 'https://youtu.be/BS7tz2rAOSA?si=VlL4d6vbNMfxsckJ', 8),
-    SongInfo('I Loved You', 'Every DAY6 September', 'https://youtu.be/EwLMA5XYnKI?si=mq92l0YXcGxyRCKM', 9),
-    SongInfo('놓아 놓아 놓아(Reboot Ver.)', 'SUNRISE', 'https://youtu.be/EErj6GjObew?si=kUBKP6xbkkJUyTyp', 10),
-    SongInfo('Congratulations', 'The Day', 'https://youtu.be/x3sFsHrUyLQ?si=TeUX-eDmwA4nc3jT', 11),
-    SongInfo('어떻게 말해', 'Every DAY6 March', 'https://youtu.be/dwywhL1PenQ?si=hKei7L5tjC82mIym', 12),
-    SongInfo('아 왜(I Wait)', 'Every DAY6 January', 'https://youtu.be/O3nFopIjmjI?si=HcEP9tc_KkSmUDnL', 13),
-    SongInfo('Love me or Leave me', 'The Book of Us : The Demon', 'https://youtu.be/LlFcvjDBSCU?si=DZtWQ4AXgxDgfqCY', 14),
-    SongInfo('Shoot Me', 'Shoot Me : Youth Part 1', 'https://youtu.be/g2X2LdJAIpU?si=eg5BzkO4Ny5Xdj7p', 15),
-    SongInfo('괴물', 'Band Aid', 'https://youtu.be/QPsJrZGB_gc?si=2JzpeS7sxO9I0ig1', 16),
-    SongInfo('Zombie', 'The Book of Us : The Demon', 'https://youtu.be/k8gx-C7GCGU?si=LIo3wR3IrFOofJYZ', 17),
-    SongInfo('녹아내려요', 'Band Aid', 'https://youtu.be/yss4rIrHl6o?si=Og2YWJXS1gW64Wq2', 18),
-    SongInfo('HAPPY', 'Fourever', 'https://youtu.be/2dFwndi4ung?si=qHm7I9HkY5mT9mSfX', 19),
-    SongInfo('바래', 'DAYDREAM', 'https://youtu.be/agNEwhiVj7Y?si=4d3Rp2UKL9i9mSfX', 20),
-    SongInfo('도와줘요 Rock&Roll', 'Band Aid', 'https://youtu.be/LCpEVQ9yvVk?si=vkf_QKcvPDf6tWd7', 21),
-    SongInfo('망겜', 'Band Aid', 'https://youtu.be/mqxDy2_GVLU?si=BkRmNspF4yj-Z-JY', 22),
-    SongInfo('DANCE DANCE', 'Every DAY6 May', 'https://youtu.be/NAW0idSQ6Zs?si=FghTVnopQ1cQspae', 23),
-    SongInfo('Free하게', 'The Day', 'https://youtu.be/SujoDZYCMCs?si=XVBGscEJQ3z9CFIX', 24),
-    SongInfo('My Day', 'Every DAY6 February', 'https://youtu.be/hA5v5zqKX3s?si=Sx_41E4TkheD6fGg', 25),
-    SongInfo('First Time', 'DAYDREAM', 'https://youtu.be/6bFj0cu4UJ8?si=2PXUoPDHh4pl-74A', 26),
-    SongInfo('Welcome to the Show', 'Fourever', 'https://youtu.be/RowlrvmyFEk?si=7IQyAJQeL8oL9acK', 27),
+    // SongInfo('한 페이지가 될 수 있게', 'The Book of Us : Gravity', 'https://youtu.be/vnS_jn2uibs?si=YliqloRK12WZ2TI8', 3),
+    // SongInfo('그녀가 웃었다', 'Band Aid', 'https://youtu.be/09ig852MsMg?si=BcedZECKDmA--r1A', 4),
+    // SongInfo('How to love', 'The Book of Us : Gravity', 'https://youtu.be/qCZm8abq8Co?si=X0FxVgmSdX6FRDZs', 5),
+    // SongInfo('쏟아진다', 'Every DAY6 November', 'https://youtu.be/IUGSKW12lHY?si=7OnG_f8a1uA8L5FW', 6),
+    // SongInfo('Say Wow', 'Every DAY6 April', 'https://youtu.be/8meVwcHtoQk?si=367m1l71yl-pHc7G', 7),
+    // SongInfo('예뻤어', 'Every DAY6 February', 'https://youtu.be/BS7tz2rAOSA?si=VlL4d6vbNMfxsckJ', 8),
+    // SongInfo('I Loved You', 'Every DAY6 September', 'https://youtu.be/EwLMA5XYnKI?si=mq92l0YXcGxyRCKM', 9),
+    // SongInfo('놓아 놓아 놓아(Reboot Ver.)', 'SUNRISE', 'https://youtu.be/EErj6GjObew?si=kUBKP6xbkkJUyTyp', 10),
+    // SongInfo('Congratulations', 'The Day', 'https://youtu.be/x3sFsHrUyLQ?si=TeUX-eDmwA4nc3jT', 11),
+    // SongInfo('어떻게 말해', 'Every DAY6 March', 'https://youtu.be/dwywhL1PenQ?si=hKei7L5tjC82mIym', 12),
+    // SongInfo('아 왜(I Wait)', 'Every DAY6 January', 'https://youtu.be/O3nFopIjmjI?si=HcEP9tc_KkSmUDnL', 13),
+    // SongInfo('Love me or Leave me', 'The Book of Us : The Demon', 'https://youtu.be/LlFcvjDBSCU?si=DZtWQ4AXgxDgfqCY', 14),
+    // SongInfo('Shoot Me', 'Shoot Me : Youth Part 1', 'https://youtu.be/g2X2LdJAIpU?si=eg5BzkO4Ny5Xdj7p', 15),
+    // SongInfo('괴물', 'Band Aid', 'https://youtu.be/QPsJrZGB_gc?si=2JzpeS7sxO9I0ig1', 16),
+    // SongInfo('Zombie', 'The Book of Us : The Demon', 'https://youtu.be/k8gx-C7GCGU?si=LIo3wR3IrFOofJYZ', 17),
+    // SongInfo('녹아내려요', 'Band Aid', 'https://youtu.be/yss4rIrHl6o?si=Og2YWJXS1gW64Wq2', 18),
+    // SongInfo('HAPPY', 'Fourever', 'https://youtu.be/2dFwndi4ung?si=qHm7I9HkY5mT9mSfX', 19),
+    // SongInfo('바래', 'DAYDREAM', 'https://youtu.be/agNEwhiVj7Y?si=4d3Rp2UKL9i9mSfX', 20),
+    // SongInfo('도와줘요 Rock&Roll', 'Band Aid', 'https://youtu.be/LCpEVQ9yvVk?si=vkf_QKcvPDf6tWd7', 21),
+    // SongInfo('망겜', 'Band Aid', 'https://youtu.be/mqxDy2_GVLU?si=BkRmNspF4yj-Z-JY', 22),
+    // SongInfo('DANCE DANCE', 'Every DAY6 May', 'https://youtu.be/NAW0idSQ6Zs?si=FghTVnopQ1cQspae', 23),
+    // SongInfo('Free하게', 'The Day', 'https://youtu.be/SujoDZYCMCs?si=XVBGscEJQ3z9CFIX', 24),
+    // SongInfo('My Day', 'Every DAY6 February', 'https://youtu.be/hA5v5zqKX3s?si=Sx_41E4TkheD6fGg', 25),
+    // SongInfo('First Time', 'DAYDREAM', 'https://youtu.be/6bFj0cu4UJ8?si=2PXUoPDHh4pl-74A', 26),
+    // SongInfo('Welcome to the Show', 'Fourever', 'https://youtu.be/RowlrvmyFEk?si=7IQyAJQeL8oL9acK', 27),
   ];
   int _currentIndex = 0;
   ImageProvider? _songBackground; //customBackground
@@ -49,13 +50,24 @@ class _SongScreenState extends State<SongScreen> {
   @override
   void initState() {
     super.initState();
-    _loadBackgroundImage();
+    _loadBackgroundImage().then((_){
+      // 매개변수 읽은 후 URL에서 제거
+      html.window.history.replaceState({}, '', '/song');
+    });
   }
 
   Future<void> _loadBackgroundImage() async {
     try {
-      final urlParams = Uri.base.queryParameters;
-      final songBackground = urlParams['cs']; // cs 파라미터 사용
+      // final urlParams = Uri.base.queryParameters;
+      // final songBackground = urlParams['cs']; // cs 파라미터 사용
+      // sessionStorage에서 매개변수 읽기
+      final storedParams = html.window.sessionStorage['params'];
+      final urlParams = storedParams != null
+          ? Uri(query: storedParams).queryParameters
+          : Uri.base.queryParameters;
+
+      final songBackground = urlParams['cs'];
+      //이 위까지 수정
 
       if (songBackground != null) {
         final ref = FirebaseStorage.instance.ref("images/$songBackground");
