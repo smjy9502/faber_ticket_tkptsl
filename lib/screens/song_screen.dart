@@ -5,7 +5,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:faber_ticket_tkptsl/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:html' as html; // For url cleansing
+import 'dart:html' as html;
+
+import 'error_screen.dart'; // For url cleansing
 
 
 class SongScreen extends StatefulWidget {
@@ -15,9 +17,9 @@ class SongScreen extends StatefulWidget {
 
 class _SongScreenState extends State<SongScreen> {
   final List<SongInfo> songInfos = [
-    SongInfo('Best Part', 'The Book of Us : Gravity', 'https://youtu.be/a-UfQfufkgU?si=f-Y4YeKPxz3DcH3F', 0),
-    SongInfo('Better Better', 'MOONRISE', 'https://youtu.be/7qkznpWePpY?si=uLTEa8pLwNL0yhMA', 1),
-    SongInfo('Healer', 'The Book of Us : Negentropy', 'https://youtu.be/HXEG0fqrViM?si=PY5WUHkY5mT9dqcd', 2),
+    // SongInfo('Best Part', 'The Book of Us : Gravity', 'https://youtu.be/a-UfQfufkgU?si=f-Y4YeKPxz3DcH3F', 0),
+    // SongInfo('Better Better', 'MOONRISE', 'https://youtu.be/7qkznpWePpY?si=uLTEa8pLwNL0yhMA', 1),
+    // SongInfo('Healer', 'The Book of Us : Negentropy', 'https://youtu.be/HXEG0fqrViM?si=PY5WUHkY5mT9dqcd', 2),
     // SongInfo('한 페이지가 될 수 있게', 'The Book of Us : Gravity', 'https://youtu.be/vnS_jn2uibs?si=YliqloRK12WZ2TI8', 3),
     // SongInfo('그녀가 웃었다', 'Band Aid', 'https://youtu.be/09ig852MsMg?si=BcedZECKDmA--r1A', 4),
     // SongInfo('How to love', 'The Book of Us : Gravity', 'https://youtu.be/qCZm8abq8Co?si=X0FxVgmSdX6FRDZs', 5),
@@ -69,16 +71,30 @@ class _SongScreenState extends State<SongScreen> {
       final songBackground = urlParams['cs'];
       //이 위까지 수정
 
-      if (songBackground != null) {
-        final ref = FirebaseStorage.instance.ref("images/$songBackground");
-        final url = await ref.getDownloadURL();
-        setState(() => _songBackground = NetworkImage(url));
-      } else {
-        throw Exception('Custom Image 파라미터 없음');
+      // 1. 매개변수 누락 시 에러 화면으로 이동
+      if (songBackground == null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => ErrorScreen()),
+          );
+        });
+        return;
       }
+
+      // 2. 정상 이미지 로드
+      final ref = FirebaseStorage.instance.ref("images/$songBackground");
+      final url = await ref.getDownloadURL();
+      setState(() => _songBackground = NetworkImage(url));
+
     } catch (e) {
-      print("이미지 로드 실패: $e");
-      setState(() => _songBackground = AssetImage(Constants.setlistBackgroundImage));
+      // 3. 예외 발생 시에도 에러 화면 이동
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ErrorScreen()),
+        );
+      });
     }
   }
 
@@ -89,15 +105,13 @@ class _SongScreenState extends State<SongScreen> {
       body: Stack(
         children: [
           if (_songBackground != null)
-            Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
+            Positioned.fill(
+              child: Image(
                 image: _songBackground!,
-                fit: BoxFit.cover,
-                // alignment: Alignment.center,
+                fit: BoxFit.fill, // 또는 BoxFit.fill, BoxFit.contain 등 테스트 가능
+                // alignment: Alignment.topCenter, // 필요시 맞춰 조정
               ),
             ),
-          ),
           Positioned(
             top: 5,
             left: 20,
@@ -106,129 +120,129 @@ class _SongScreenState extends State<SongScreen> {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => CustomScreen()),
+                  MaterialPageRoute(builder: (context) => MainScreen()),
                 );
               },
             ),
           ),
-          SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(flex: 2, child: SizedBox()), // 위쪽 여백 늘리기
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Opacity(
-                      opacity: 0.5,
-                      child: Transform.rotate(
-                        angle: -0.1, // 왼쪽으로 살짝 기울임
-                      child: Container(
-                        width: 100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/${Constants.coverImages[(_currentIndex - 1 + songInfos.length) % songInfos.length]}',
-                              width: 50,
-                              height: 50,
-                            ),
-                            Text(
-                              songInfos[(_currentIndex - 1 + songInfos.length) % songInfos.length].albumTitle,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                            Text(
-                              songInfos[(_currentIndex - 1 + songInfos.length) % songInfos.length].songTitle,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                     ),
-                    ),
-                    Container(
-                      width: 200,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              final url = songInfos[_currentIndex].youtubeLink;
-                              if (await canLaunchUrl(Uri.parse(url))) {
-                                await launchUrl(Uri.parse(url));
-                              } else {
-                                throw 'Could not launch $url';
-                              }
-                            },
-                            child: Image.asset(
-                              'assets/images/${Constants.coverImages[_currentIndex]}',
-                              width: 250,
-                              height: 250,
-                            ),
-                          ),
-                          Text(
-                            songInfos[_currentIndex].albumTitle,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                          Text(
-                            songInfos[_currentIndex].songTitle,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Opacity(
-                      opacity: 0.5,
-                      child: Transform.rotate(
-                        angle: 0.1, // 오른쪽으로 살짝 기울임
-                      child: Container(
-                        width: 100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/${Constants.coverImages[(_currentIndex + 1) % songInfos.length]}',
-                              width: 50,
-                              height: 50,
-                            ),
-                            Text(
-                              songInfos[(_currentIndex + 1) % songInfos.length].albumTitle,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                            Text(
-                              songInfos[(_currentIndex + 1) % songInfos.length].songTitle,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                     ),
-                    ),
-                  ],
-                ),
-                Expanded(child: SizedBox()), // 아래쪽 여백 늘리기
-              ],
-            ),
-          ),
-          GestureDetector(
-            onPanEnd: (details) {
-              if (details.velocity.pixelsPerSecond.dx > 0) {
-                setState(() {
-                  _currentIndex = (_currentIndex - 1 + songInfos.length) % songInfos.length;
-                });
-              } else if (details.velocity.pixelsPerSecond.dx < 0) {
-                setState(() {
-                  _currentIndex = (_currentIndex + 1) % songInfos.length;
-                });
-              }
-            },
-          ),
+          // SafeArea(
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Expanded(flex: 2, child: SizedBox()), // 위쪽 여백 늘리기
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //         children: [
+          //           Opacity(
+          //             opacity: 0.5,
+          //             child: Transform.rotate(
+          //               angle: -0.1, // 왼쪽으로 살짝 기울임
+          //             child: Container(
+          //               width: 100,
+          //               child: Column(
+          //                 mainAxisAlignment: MainAxisAlignment.center,
+          //                 children: [
+          //                   Image.asset(
+          //                     'assets/images/${Constants.coverImages[(_currentIndex - 1 + songInfos.length) % songInfos.length]}',
+          //                     width: 50,
+          //                     height: 50,
+          //                   ),
+          //                   Text(
+          //                     songInfos[(_currentIndex - 1 + songInfos.length) % songInfos.length].albumTitle,
+          //                     textAlign: TextAlign.center,
+          //                     style: TextStyle(fontSize: 12, color: Colors.white),
+          //                   ),
+          //                   Text(
+          //                     songInfos[(_currentIndex - 1 + songInfos.length) % songInfos.length].songTitle,
+          //                     textAlign: TextAlign.center,
+          //                     style: TextStyle(fontSize: 12, color: Colors.white),
+          //                   ),
+          //                 ],
+          //               ),
+          //             ),
+          //            ),
+          //           ),
+          //           Container(
+          //             width: 200,
+          //             child: Column(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               children: [
+          //                 GestureDetector(
+          //                   onTap: () async {
+          //                     final url = songInfos[_currentIndex].youtubeLink;
+          //                     if (await canLaunchUrl(Uri.parse(url))) {
+          //                       await launchUrl(Uri.parse(url));
+          //                     } else {
+          //                       throw 'Could not launch $url';
+          //                     }
+          //                   },
+          //                   child: Image.asset(
+          //                     'assets/images/${Constants.coverImages[_currentIndex]}',
+          //                     width: 250,
+          //                     height: 250,
+          //                   ),
+          //                 ),
+          //                 Text(
+          //                   songInfos[_currentIndex].albumTitle,
+          //                   textAlign: TextAlign.center,
+          //                   style: TextStyle(fontSize: 16, color: Colors.white),
+          //                 ),
+          //                 Text(
+          //                   songInfos[_currentIndex].songTitle,
+          //                   textAlign: TextAlign.center,
+          //                   style: TextStyle(fontSize: 16, color: Colors.white),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //           Opacity(
+          //             opacity: 0.5,
+          //             child: Transform.rotate(
+          //               angle: 0.1, // 오른쪽으로 살짝 기울임
+          //             child: Container(
+          //               width: 100,
+          //               child: Column(
+          //                 mainAxisAlignment: MainAxisAlignment.center,
+          //                 children: [
+          //                   Image.asset(
+          //                     'assets/images/${Constants.coverImages[(_currentIndex + 1) % songInfos.length]}',
+          //                     width: 50,
+          //                     height: 50,
+          //                   ),
+          //                   Text(
+          //                     songInfos[(_currentIndex + 1) % songInfos.length].albumTitle,
+          //                     textAlign: TextAlign.center,
+          //                     style: TextStyle(fontSize: 12, color: Colors.white),
+          //                   ),
+          //                   Text(
+          //                     songInfos[(_currentIndex + 1) % songInfos.length].songTitle,
+          //                     textAlign: TextAlign.center,
+          //                     style: TextStyle(fontSize: 12, color: Colors.white),
+          //                   ),
+          //                 ],
+          //               ),
+          //             ),
+          //            ),
+          //           ),
+          //         ],
+          //       ),
+          //       Expanded(child: SizedBox()), // 아래쪽 여백 늘리기
+          //     ],
+          //   ),
+          // ),
+          // GestureDetector(
+          //   onPanEnd: (details) {
+          //     if (details.velocity.pixelsPerSecond.dx > 0) {
+          //       setState(() {
+          //         _currentIndex = (_currentIndex - 1 + songInfos.length) % songInfos.length;
+          //       });
+          //     } else if (details.velocity.pixelsPerSecond.dx < 0) {
+          //       setState(() {
+          //         _currentIndex = (_currentIndex + 1) % songInfos.length;
+          //       });
+          //     }
+          //   },
+          // ),
         ],
       ),
     );
