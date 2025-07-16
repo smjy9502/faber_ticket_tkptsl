@@ -1,259 +1,427 @@
+import 'dart:math';
+import 'package:faber_ticket_tkptsl/screens/photo_screen.dart';
 import 'package:faber_ticket_tkptsl/screens/custom_screen.dart';
 import 'package:faber_ticket_tkptsl/screens/main_screen.dart';
-import 'package:faber_ticket_tkptsl/screens/photo_screen.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:faber_ticket_tkptsl/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:html' as html;
-
-import 'error_screen.dart'; // For url cleansing
-
 
 class SongScreen extends StatefulWidget {
   @override
   _SongScreenState createState() => _SongScreenState();
 }
 
-class _SongScreenState extends State<SongScreen> {
-  final List<SongInfo> songInfos = [
-    // SongInfo('Best Part', 'The Book of Us : Gravity', 'https://youtu.be/a-UfQfufkgU?si=f-Y4YeKPxz3DcH3F', 0),
-    // SongInfo('Better Better', 'MOONRISE', 'https://youtu.be/7qkznpWePpY?si=uLTEa8pLwNL0yhMA', 1),
-    // SongInfo('Healer', 'The Book of Us : Negentropy', 'https://youtu.be/HXEG0fqrViM?si=PY5WUHkY5mT9dqcd', 2),
-    // SongInfo('한 페이지가 될 수 있게', 'The Book of Us : Gravity', 'https://youtu.be/vnS_jn2uibs?si=YliqloRK12WZ2TI8', 3),
-    // SongInfo('그녀가 웃었다', 'Band Aid', 'https://youtu.be/09ig852MsMg?si=BcedZECKDmA--r1A', 4),
-    // SongInfo('How to love', 'The Book of Us : Gravity', 'https://youtu.be/qCZm8abq8Co?si=X0FxVgmSdX6FRDZs', 5),
-    // SongInfo('쏟아진다', 'Every DAY6 November', 'https://youtu.be/IUGSKW12lHY?si=7OnG_f8a1uA8L5FW', 6),
-    // SongInfo('Say Wow', 'Every DAY6 April', 'https://youtu.be/8meVwcHtoQk?si=367m1l71yl-pHc7G', 7),
-    // SongInfo('예뻤어', 'Every DAY6 February', 'https://youtu.be/BS7tz2rAOSA?si=VlL4d6vbNMfxsckJ', 8),
-    // SongInfo('I Loved You', 'Every DAY6 September', 'https://youtu.be/EwLMA5XYnKI?si=mq92l0YXcGxyRCKM', 9),
-    // SongInfo('놓아 놓아 놓아(Reboot Ver.)', 'SUNRISE', 'https://youtu.be/EErj6GjObew?si=kUBKP6xbkkJUyTyp', 10),
-    // SongInfo('Congratulations', 'The Day', 'https://youtu.be/x3sFsHrUyLQ?si=TeUX-eDmwA4nc3jT', 11),
-    // SongInfo('어떻게 말해', 'Every DAY6 March', 'https://youtu.be/dwywhL1PenQ?si=hKei7L5tjC82mIym', 12),
-    // SongInfo('아 왜(I Wait)', 'Every DAY6 January', 'https://youtu.be/O3nFopIjmjI?si=HcEP9tc_KkSmUDnL', 13),
-    // SongInfo('Love me or Leave me', 'The Book of Us : The Demon', 'https://youtu.be/LlFcvjDBSCU?si=DZtWQ4AXgxDgfqCY', 14),
-    // SongInfo('Shoot Me', 'Shoot Me : Youth Part 1', 'https://youtu.be/g2X2LdJAIpU?si=eg5BzkO4Ny5Xdj7p', 15),
-    // SongInfo('괴물', 'Band Aid', 'https://youtu.be/QPsJrZGB_gc?si=2JzpeS7sxO9I0ig1', 16),
-    // SongInfo('Zombie', 'The Book of Us : The Demon', 'https://youtu.be/k8gx-C7GCGU?si=LIo3wR3IrFOofJYZ', 17),
-    // SongInfo('녹아내려요', 'Band Aid', 'https://youtu.be/yss4rIrHl6o?si=Og2YWJXS1gW64Wq2', 18),
-    // SongInfo('HAPPY', 'Fourever', 'https://youtu.be/2dFwndi4ung?si=qHm7I9HkY5mT9mSfX', 19),
-    // SongInfo('바래', 'DAYDREAM', 'https://youtu.be/agNEwhiVj7Y?si=4d3Rp2UKL9i9mSfX', 20),
-    // SongInfo('도와줘요 Rock&Roll', 'Band Aid', 'https://youtu.be/LCpEVQ9yvVk?si=vkf_QKcvPDf6tWd7', 21),
-    // SongInfo('망겜', 'Band Aid', 'https://youtu.be/mqxDy2_GVLU?si=BkRmNspF4yj-Z-JY', 22),
-    // SongInfo('DANCE DANCE', 'Every DAY6 May', 'https://youtu.be/NAW0idSQ6Zs?si=FghTVnopQ1cQspae', 23),
-    // SongInfo('Free하게', 'The Day', 'https://youtu.be/SujoDZYCMCs?si=XVBGscEJQ3z9CFIX', 24),
-    // SongInfo('My Day', 'Every DAY6 February', 'https://youtu.be/hA5v5zqKX3s?si=Sx_41E4TkheD6fGg', 25),
-    // SongInfo('First Time', 'DAYDREAM', 'https://youtu.be/6bFj0cu4UJ8?si=2PXUoPDHh4pl-74A', 26),
-    // SongInfo('Welcome to the Show', 'Fourever', 'https://youtu.be/RowlrvmyFEk?si=7IQyAJQeL8oL9acK', 27),
+class _SongScreenState extends State<SongScreen> with SingleTickerProviderStateMixin {
+  int _currentIndex = 3;
+  late AnimationController _eqController;
+
+  final List<Map<String, String>> songs = [
+    {
+      'title': 'Best Part',
+      'album': 'The Book of Us : Gravity',
+      'cover': 'assets/images/cover_1.webp',
+      'link': 'https://youtu.be/a-UfQfufkgU?si=f-Y4YeKPxz3DcH3F',
+    },
+    {
+      'title': 'Better Better',
+      'album': 'MOONRISE',
+      'cover': 'assets/images/cover_2.webp',
+      'link': 'https://youtu.be/7qkznpWePpY?si=uLTEa8pLwNL0yhMA',
+    },
+    {
+      'title': 'Healer',
+      'album': 'The Book of Us : Negentropy',
+      'cover': 'assets/images/cover_3.webp',
+      'link': 'https://youtu.be/HXEG0fqrViM?si=PY5WUHkY5mT9dqcd',
+    },
+    {
+      'title': '한 페이지가 될 수 있게',
+      'album': 'The Book of Us : Gravity',
+      'cover': 'assets/images/cover_4.webp',
+      'link': 'https://youtu.be/vnS_jn2uibs?si=YliqloRK12WZ2TI8',
+    },
+    {
+      'title': '그녀가 웃었다',
+      'album': 'Band Aid',
+      'cover': 'assets/images/cover_5.webp',
+      'link': 'https://youtu.be/09ig852MsMg?si=BcedZECKDmA--r1A',
+    },
+    {
+      'title': 'How to love',
+      'album': 'The Book of Us : Gravity',
+      'cover': 'assets/images/cover_6.webp',
+      'link': 'https://youtu.be/qCZm8abq8Co?si=X0FxVgmSdX6FRDZs',
+    },
+    {
+      'title': '쏟아진다',
+      'album': 'Every DAY6 November',
+      'cover': 'assets/images/cover_7.webp',
+      'link': 'https://youtu.be/IUGSKW12lHY?si=7OnG_f8a1uA8L5FW',
+    },
+    {
+      'title': 'Say Wow',
+      'album': 'Every DAY6 April',
+      'cover': 'assets/images/cover_8.webp',
+      'link': 'https://youtu.be/8meVwcHtoQk?si=367m1l71yl-pHc7G',
+    },
+    {
+      'title': '예뻤어',
+      'album': 'Every DAY6 February',
+      'cover': 'assets/images/cover_9.webp',
+      'link': 'https://youtu.be/BS7tz2rAOSA?si=VlL4d6vbNMfxsckJ',
+    },
+    {
+      'title': 'I Loved You',
+      'album': 'Every DAY6 September',
+      'cover': 'assets/images/cover_10.webp',
+      'link': 'https://youtu.be/EwLMA5XYnKI?si=mq92l0YXcGxyRCKM',
+    },
+    {
+      'title': '놓아 놓아 놓아(Rebooted Ver.)',
+      'album': 'SUNRISE',
+      'cover': 'assets/images/cover_11.webp',
+      'link': 'https://youtu.be/EErj6GjObew?si=kUBKP6xbkkJUyTyp',
+    },
+    {
+      'title': 'Congratulations',
+      'album': 'The Day',
+      'cover': 'assets/images/cover_12.webp',
+      'link': 'https://youtu.be/x3sFsHrUyLQ?si=TeUX-eDmwA4nc3jT',
+    },
+    {
+      'title': '어떻게 말해',
+      'album': 'Every DAY6 March',
+      'cover': 'assets/images/cover_13.webp',
+      'link': 'https://youtu.be/dwywhL1PenQ?si=hKei7L5tjC82mIym',
+    },
+    {
+      'title': '아 왜(I Wait)',
+      'album': 'Every DAY6 January',
+      'cover': 'assets/images/cover_14.webp',
+      'link': 'https://youtu.be/O3nFopIjmjI?si=HcEP9tc_KkSmUDnL',
+    },
+    {
+      'title': 'Love me or Leave me',
+      'album': 'The Book of Us : The Demon',
+      'cover': 'assets/images/cover_15.webp',
+      'link': 'https://youtu.be/LlFcvjDBSCU?si=DZtWQ4AXgxDgfqCY',
+    },
+    {
+      'title': 'Shoot Me',
+      'album': 'Shoot Me : Youth Part 1',
+      'cover': 'assets/images/cover_16.webp',
+      'link': 'https://youtu.be/g2X2LdJAIpU?si=eg5BzkO4Ny5Xdj7p',
+    },
+    {
+      'title': '괴물',
+      'album': 'Band Aid',
+      'cover': 'assets/images/cover_17.webp',
+      'link': 'https://youtu.be/QPsJrZGB_gc?si=2JzpeS7sxO9I0ig1',
+    },
+    {
+      'title': 'Zombie',
+      'album': 'The Book of Us : The Demon',
+      'cover': 'assets/images/cover_18.webp',
+      'link': 'https://youtu.be/k8gx-C7GCGU?si=LIo3wR3IrFOofJYZ',
+    },
+    {
+      'title': '녹아내려요',
+      'album': 'Band Aid',
+      'cover': 'assets/images/cover_19.webp',
+      'link': 'https://youtu.be/yss4rIrHl6o?si=Og2YWJXS1gW64Wq2',
+    },
+    {
+      'title': 'HAPPY',
+      'album': 'Fourever',
+      'cover': 'assets/images/cover_20.webp',
+      'link': 'https://youtu.be/2dFwndi4ung?si=qHm7I9H2iZP0UMm6',
+    },
+    {
+      'title': '바래',
+      'album': 'DAYDREAM',
+      'cover': 'assets/images/cover_21.webp',
+      'link': 'https://youtu.be/agNEwhiVj7Y?si=4d3Rp2UKL9i9mSfX',
+    },
+    {
+      'title': '도와줘요 Rock&Roll',
+      'album': 'Band Aid',
+      'cover': 'assets/images/cover_22.webp',
+      'link': 'https://youtu.be/LCpEVQ9yvVk?si=vkf_QKcvPDf6tWd7',
+    },
+    {
+      'title': '망겜',
+      'album': 'Band Aid',
+      'cover': 'assets/images/cover_23.webp',
+      'link': 'https://youtu.be/mqxDy2_GVLU?si=BkRmNspF4yj-Z-JY',
+    },
+    {
+      'title': 'DANCE DANCE',
+      'album': 'Every DAY6 May',
+      'cover': 'assets/images/cover_24.webp',
+      'link': 'https://youtu.be/NAW0idSQ6Zs?si=FghTVnopQ1cQspae',
+    },
+    {
+      'title': 'Free하게',
+      'album': 'The Day',
+      'cover': 'assets/images/cover_25.webp',
+      'link': 'https://youtu.be/SujoDZYCMCs?si=XVBGscEJQ3z9CFIX',
+    },
+    {
+      'title': 'My Day',
+      'album': 'Every DAY6 February',
+      'cover': 'assets/images/cover_26.webp',
+      'link': 'https://youtu.be/hA5v5zqKX3s?si=Sx_41E4TkheD6fGg',
+    },
+    {
+      'title': 'First Time',
+      'album': 'DAYDREAM',
+      'cover': 'assets/images/cover_27.webp',
+      'link': 'https://youtu.be/6bFj0cu4UJ8?si=2PXUoPDHh4pl-74A',
+    },
+    {
+      'title': 'Welcome to the Show',
+      'album': 'Fourever',
+      'cover': 'assets/images/cover_28.webp',
+      'link': 'https://youtu.be/RowlrvmyFEk?si=7IQyAJQeL8oL9acK',
+    },
   ];
-  int _currentIndex = 0;
-  ImageProvider? _songBackground; //customBackground
 
   @override
   void initState() {
     super.initState();
-    _loadBackgroundImage().then((_){
-      // 매개변수 읽은 후 URL에서 제거
-      html.window.history.replaceState({}, '', '/song');
-    });
+    _eqController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 800),
+    )..repeat(reverse: true);
   }
 
-  Future<void> _loadBackgroundImage() async {
-    try {
-      // final urlParams = Uri.base.queryParameters;
-      // final songBackground = urlParams['cs']; // cs 파라미터 사용
-      // sessionStorage에서 매개변수 읽기
-      final storedParams = html.window.sessionStorage['params'];
-      final urlParams = storedParams != null
-          ? Uri(query: storedParams).queryParameters
-          : Uri.base.queryParameters;
+  @override
+  void dispose() {
+    _eqController.dispose();
+    super.dispose();
+  }
 
-      final songBackground = urlParams['cs'];
-      //이 위까지 수정
-
-      // 1. 매개변수 누락 시 에러 화면으로 이동
-      if (songBackground == null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => ErrorScreen()),
-          );
-        });
-        return;
-      }
-
-      // 2. 정상 이미지 로드
-      final ref = FirebaseStorage.instance.ref("images/$songBackground");
-      final url = await ref.getDownloadURL();
-      setState(() => _songBackground = NetworkImage(url));
-
-    } catch (e) {
-      // 3. 예외 발생 시에도 에러 화면 이동
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ErrorScreen()),
-        );
-      });
+  void _launchURL(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
     }
   }
 
+  void _onNavTap(int index) async {
+    if (index == _currentIndex) return;
+    setState(() => _currentIndex = index);
+    Widget? nextScreen;
+    if (index == 0) {
+      nextScreen = MainScreen();
+    } else if (index == 1) {
+      nextScreen = CustomScreen();
+    } else if (index == 2) {
+      nextScreen = PhotoScreen();
+    } else if (index == 3) {
+      nextScreen = SongScreen();
+    }
+    if (nextScreen != null) {
+      // 애니메이션 방향 결정
+      final isLeft = index < 3;
+      await Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => nextScreen!,
+          transitionsBuilder: (_, animation, __, child) {
+            final begin = Offset(isLeft ? -1.0 : 1.0, 0.0);
+            final end = Offset.zero;
+            final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: Curves.ease));
+            return SlideTransition(position: animation.drive(tween), child: child);
+          },
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Stack(
         children: [
-          if (_songBackground != null)
-            Positioned.fill(
-              child: Image(
-                image: _songBackground!,
-                fit: BoxFit.fill, // 또는 BoxFit.fill, BoxFit.contain 등 테스트 가능
-                // alignment: Alignment.topCenter, // 필요시 맞춰 조정
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFFF5F5F5), Color(0xFFE0E0E0)],
+                ),
               ),
             ),
-          Positioned(
-            top: 5,
-            left: 20,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => MainScreen()),
-                );
-              },
+          ),
+          Positioned.fill(child: CustomPaint(painter: _NoisePainter())),
+          SafeArea(
+            child: Column(
+              children: [
+                SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "SETLIST",
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.08,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF93BBDF),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    AnimatedBuilder(
+                      animation: _eqController,
+                      builder: (_, __) {
+                        return Row(
+                          children: List.generate(3, (i) {
+                            return Container(
+                              width: 3,
+                              height: 10 + 10 * sin(_eqController.value * pi * (i + 1)),
+                              margin: EdgeInsets.symmetric(horizontal: 1),
+                              decoration: BoxDecoration(
+                                color: Color(0xFF93BBDF),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            );
+                          }),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(left:20, right:20, top:10, bottom:100),
+                    itemCount: songs.length,
+                    itemBuilder: (context, index) {
+                      final song = songs[index];
+                      return Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(18),
+                          image: DecorationImage(
+                            image: AssetImage(song['cover']!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18),
+                            color: Colors.black.withOpacity(0.3),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      song['title']!,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 30,
+                                      height: 1,
+                                      margin: EdgeInsets.symmetric(vertical: 6),
+                                      color: Colors.white.withOpacity(0.6),
+                                    ),
+                                    Text(
+                                      song['album']!,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.white.withOpacity(0.85),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => _launchURL(song['link']!),
+                                child: Container(
+                                  padding: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.black.withOpacity(0.3),
+                                  ),
+                                  child: Icon(Icons.play_arrow, color: Colors.white, size: 28),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildMinimalIconButton(Icons.home, 0),
+                    _buildMinimalIconButton(Icons.confirmation_number, 1),
+                    _buildMinimalIconButton(Icons.camera_alt, 2),
+                    _buildMinimalIconButton(Icons.music_note, 3),
+                  ],
+                ),
+                SizedBox(height: 24),
+              ],
             ),
           ),
-          // SafeArea(
-          //   child: Column(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //       Expanded(flex: 2, child: SizedBox()), // 위쪽 여백 늘리기
-          //       Row(
-          //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //         children: [
-          //           Opacity(
-          //             opacity: 0.5,
-          //             child: Transform.rotate(
-          //               angle: -0.1, // 왼쪽으로 살짝 기울임
-          //             child: Container(
-          //               width: 100,
-          //               child: Column(
-          //                 mainAxisAlignment: MainAxisAlignment.center,
-          //                 children: [
-          //                   Image.asset(
-          //                     'assets/images/${Constants.coverImages[(_currentIndex - 1 + songInfos.length) % songInfos.length]}',
-          //                     width: 50,
-          //                     height: 50,
-          //                   ),
-          //                   Text(
-          //                     songInfos[(_currentIndex - 1 + songInfos.length) % songInfos.length].albumTitle,
-          //                     textAlign: TextAlign.center,
-          //                     style: TextStyle(fontSize: 12, color: Colors.white),
-          //                   ),
-          //                   Text(
-          //                     songInfos[(_currentIndex - 1 + songInfos.length) % songInfos.length].songTitle,
-          //                     textAlign: TextAlign.center,
-          //                     style: TextStyle(fontSize: 12, color: Colors.white),
-          //                   ),
-          //                 ],
-          //               ),
-          //             ),
-          //            ),
-          //           ),
-          //           Container(
-          //             width: 200,
-          //             child: Column(
-          //               mainAxisAlignment: MainAxisAlignment.center,
-          //               children: [
-          //                 GestureDetector(
-          //                   onTap: () async {
-          //                     final url = songInfos[_currentIndex].youtubeLink;
-          //                     if (await canLaunchUrl(Uri.parse(url))) {
-          //                       await launchUrl(Uri.parse(url));
-          //                     } else {
-          //                       throw 'Could not launch $url';
-          //                     }
-          //                   },
-          //                   child: Image.asset(
-          //                     'assets/images/${Constants.coverImages[_currentIndex]}',
-          //                     width: 250,
-          //                     height: 250,
-          //                   ),
-          //                 ),
-          //                 Text(
-          //                   songInfos[_currentIndex].albumTitle,
-          //                   textAlign: TextAlign.center,
-          //                   style: TextStyle(fontSize: 16, color: Colors.white),
-          //                 ),
-          //                 Text(
-          //                   songInfos[_currentIndex].songTitle,
-          //                   textAlign: TextAlign.center,
-          //                   style: TextStyle(fontSize: 16, color: Colors.white),
-          //                 ),
-          //               ],
-          //             ),
-          //           ),
-          //           Opacity(
-          //             opacity: 0.5,
-          //             child: Transform.rotate(
-          //               angle: 0.1, // 오른쪽으로 살짝 기울임
-          //             child: Container(
-          //               width: 100,
-          //               child: Column(
-          //                 mainAxisAlignment: MainAxisAlignment.center,
-          //                 children: [
-          //                   Image.asset(
-          //                     'assets/images/${Constants.coverImages[(_currentIndex + 1) % songInfos.length]}',
-          //                     width: 50,
-          //                     height: 50,
-          //                   ),
-          //                   Text(
-          //                     songInfos[(_currentIndex + 1) % songInfos.length].albumTitle,
-          //                     textAlign: TextAlign.center,
-          //                     style: TextStyle(fontSize: 12, color: Colors.white),
-          //                   ),
-          //                   Text(
-          //                     songInfos[(_currentIndex + 1) % songInfos.length].songTitle,
-          //                     textAlign: TextAlign.center,
-          //                     style: TextStyle(fontSize: 12, color: Colors.white),
-          //                   ),
-          //                 ],
-          //               ),
-          //             ),
-          //            ),
-          //           ),
-          //         ],
-          //       ),
-          //       Expanded(child: SizedBox()), // 아래쪽 여백 늘리기
-          //     ],
-          //   ),
-          // ),
-          // GestureDetector(
-          //   onPanEnd: (details) {
-          //     if (details.velocity.pixelsPerSecond.dx > 0) {
-          //       setState(() {
-          //         _currentIndex = (_currentIndex - 1 + songInfos.length) % songInfos.length;
-          //       });
-          //     } else if (details.velocity.pixelsPerSecond.dx < 0) {
-          //       setState(() {
-          //         _currentIndex = (_currentIndex + 1) % songInfos.length;
-          //       });
-          //     }
-          //   },
-          // ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMinimalIconButton(IconData icon, int index) {
+    final bool isSelected = _currentIndex == index;
+    return GestureDetector(
+      onTap: () => _onNavTap(index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: isSelected ? Colors.lightBlue : Colors.black.withOpacity(0.3),
+            size: MediaQuery.of(context).size.width * 0.075,
+          ),
+          SizedBox(height: 4),
+          if (isSelected)
+            Container(
+              width: 14,
+              height: 2,
+              decoration: BoxDecoration(
+                color: Colors.lightBlue,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
         ],
       ),
     );
   }
 }
 
-class SongInfo {
-  final String songTitle;
-  final String albumTitle;
-  final String youtubeLink;
-  final int index;
-
-  SongInfo(this.songTitle, this.albumTitle, this.youtubeLink, this.index);
+class _NoisePainter extends CustomPainter {
+  final Random _random = Random();
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.black.withOpacity(0.015)..blendMode = BlendMode.srcOver;
+    for (int i = 0; i < 8000; i++) {
+      final dx = _random.nextDouble() * size.width;
+      final dy = _random.nextDouble() * size.height;
+      canvas.drawCircle(Offset(dx, dy), 0.3, paint);
+    }
+  }
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

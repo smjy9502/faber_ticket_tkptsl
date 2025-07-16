@@ -24,6 +24,9 @@ dependencies:
   universal_html: ^2.0.8
 
   flutter_keyboard_visibility: ^5.3.0
+  cached_network_image: ^3.3.1
+  flutter_image_compress: ^2.2.0
+  image: ^4.1.7
 
 
 #dependency_overrides:
@@ -48,11 +51,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/ticket_front.webp
-    - assets/images/ticket_back.webp
-    - assets/images/setlist_background.webp
-    - assets/images/photo_background.webp
     - assets/images/error_background.jpg
+    - assets/images/pier.webp
+    - assets/images/logo.webp
     - assets/images/cover_1.webp
     - assets/images/cover_2.webp
     - assets/images/cover_3.webp
@@ -81,8 +82,7 @@ flutter:
     - assets/images/cover_26.webp
     - assets/images/cover_27.webp
     - assets/images/cover_28.webp
-    - assets/images/petal_full.png
-    - assets/images/petal_empty.png
+
 
   fonts:
     - family: CustomFont
