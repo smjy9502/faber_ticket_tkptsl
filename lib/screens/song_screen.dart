@@ -291,7 +291,7 @@ class _SongScreenState extends State<SongScreen> with SingleTickerProviderStateM
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 15),
                 Expanded(
                   child: ListView.builder(
                     padding: EdgeInsets.only(left:20, right:20, top:10, bottom:100),
