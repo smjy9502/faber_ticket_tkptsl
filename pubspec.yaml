@@ -22,7 +22,7 @@ dependencies:
   firebase_auth: ^5.4.2
   firebase_storage: ^12.4.2
   universal_html: ^2.0.8
-
+  font_awesome_flutter: ^10.7.0
   flutter_keyboard_visibility: ^5.3.0
   cached_network_image: ^3.3.1
   flutter_image_compress: ^2.2.0
@@ -51,8 +51,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/pier.webp
-    - assets/images/logo.webp
     - assets/images/cover_1.webp
     - assets/images/cover_2.webp
     - assets/images/cover_3.webp
@@ -81,7 +79,10 @@ flutter:
     - assets/images/cover_26.webp
     - assets/images/cover_27.webp
     - assets/images/cover_28.webp
-    - assets/images/error_01.webp
+    - assets/images/pier.webp
+    - assets/images/logo.webp
+    - assets/images/locker.png
+
 
 
   fonts:

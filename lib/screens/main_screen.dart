@@ -3,14 +3,8 @@ import 'package:faber_ticket_tkptsl/screens/custom_screen.dart';
 import 'package:faber_ticket_tkptsl/screens/photo_screen.dart';
 import 'package:faber_ticket_tkptsl/screens/song_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:faber_ticket_tkptsl/utils/constants.dart';
-import 'package:flutter/material.dart';
-import 'package:faber_ticket_tkptsl/widgets/custom_button.dart';
-import 'package:faber_ticket_tkptsl/services/firebase_service.dart';
 import 'error_screen.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:html' as html; // For url cleansing
-import 'package:cached_network_image/cached_network_image.dart';
 
 
 
